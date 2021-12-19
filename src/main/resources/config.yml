@@ -1,0 +1,38 @@
+# 全体に関する設定
+General:
+  # 非OPが転送で待つ時間 (デフォルトは5秒)
+  waittime: 5
+# 転移先の設定
+Locations:
+  # 転移先名.{転移先表示名, 表示マテリアル名, 転移先ワールド, 転移先座標}
+  # マテリアル名はJavaDoc参照 → https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
+  # 転移先名
+  center:
+    # 転移先表示名
+    DisplayName: 中心街
+    # 表示マテリアル名
+    DisplayMaterial: DEEPSLATE_BRICKS
+    # 転移先ワールド
+    ToWorld: main
+    # 転移先座標
+    ToLoc: 0,0,0
+  wahu:
+    DisplayName: 和風地区
+    DisplayMaterial: BAMBOO
+    ToWorld: main
+    ToLoc: 0,0,0
+  yohu:
+    DisplayName: 洋風地区
+    DisplayMaterial: BRICKS
+    ToWorld: main
+    ToLoc: 0,0,0
+  mati:
+    DisplayName: 現代建築地区
+    DisplayMaterial: WHITE_CONCRETE
+    ToWorld: main
+    ToLoc: 0,0,0
+  noname:
+    DisplayName: 名もなき村
+    DisplayMaterial: OAK_WOOD
+    ToWorld: main
+    ToLoc: 0,0,0

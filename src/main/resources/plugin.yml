@@ -1,0 +1,33 @@
+name: WorldLocTeleporter
+version: '${project.version}'
+main: net.azisaba.tsl.worldlocteleporter.WorldLocTeleporter
+api-version: 1.18
+authors: [ 5hak3 ]
+description: Yamlで指定した座標にテレポートするやつ（GUIとコマンド）
+
+permissions:
+  wltp.op:
+    description: OP権限判定用
+    default: op
+
+commands:
+  wltp:
+    description: WorldLocTeleporterのキーワード
+    usage: /wltp で GUI起動，/wltp <転移先名> で 転移先へ移動
+  wltpreload:
+    description: wltpの設定をリロードする
+    permission: wltp.op
+    permission-message: このコマンドは管理者のみ利用できます
+  wltplist:
+    description: wltpの転移先一覧を表示する
+# 以下はめんどくさくなったんで気が向いたら作る
+#  wltpadd:
+#    description: 新しい転移先を設定に加える
+#    usage: /wltp <転移先名> <ワールド名> <座標X> <座標Y> <座標Z>
+#    permission: wltp.op
+#    permission-message: このコマンドは管理者のみ利用できます
+#  wltpdel:
+#    description: 転移先名を指定して削除する
+#    usage: /wltp <転移先名> で転移先設定を削除
+#    permission: wltp.op
+#    permission-message: このコマンドは管理者のみ利用できます
