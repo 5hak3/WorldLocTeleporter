@@ -30,7 +30,7 @@ public class WLTPLocation {
         else
             this.dispMat = Material.OAK_SIGN;
         // ワールドを取得
-        this.world = Bukkit.getWorld(world);
+        this.world = Bukkit.getServer().getWorld(world);
         // ワールドが取得できていれば座標を取得
         // ワールドが取得できていなければ座標をnullにしておく
         if (this.world != null) {
@@ -38,7 +38,8 @@ public class WLTPLocation {
             List<Integer> locarr = Arrays.stream(loc.split(",",3)).map(Integer::parseInt).collect(Collectors.toList());
             this.loc = new Location(this.world, locarr.get(0), locarr.get(1), locarr.get(2));
         }
-        else
+        else {
             this.loc = null;
+        }
     }
 }

@@ -84,24 +84,33 @@ public class WLTPConfig implements CommandExecutor {
                     Object loc = location.get("ToLoc");
                     // これらのObjectがStringかを確かめてWLTPLocationを生成する
                     if (dispName instanceof String && dispMat instanceof String &&
-                        world instanceof String && loc instanceof String)
+                        world instanceof String && loc instanceof String) {
                         this.locs.put(
                                 // 転移先名
                                 key,
                                 // 転移先情報
-                                new WLTPLocation((String)dispName, (String)dispMat, (String)world, (String)loc)
+                                new WLTPLocation((String) dispName, (String) dispMat, (String) world, (String) loc)
                         );
+                        // デバッグ用
+                        WLTPLocation dbg = this.locs.get(key);
+//                        String msg = "";
+//                        msg += "[" + key + "]" + "\ndispName: " + dbg.dispName + "\ndispMat: " + dbg.dispMat +
+//                                "\nworld: " + dbg.world + "\nloc: " + dbg.loc;
+//                        this.plugin.getLogger().info(msg);
+                        if (dbg.world == null) this.plugin.getLogger().info(ChatColor.RED + "WORLDがNULLです．");
+                        if (dbg.loc == null) this.plugin.getLogger().info(ChatColor.RED + "LOCがNULLです．");
+                    }
                     else {
-                        this.plugin.getLogger().info(ChatColor.RED + prefix + "テンプレートに従ってください．");
+                        this.plugin.getLogger().info(ChatColor.RED + key + ": テンプレートに従ってください．");
                         return false;
                     }
                 } else {
-                    this.plugin.getLogger().info(ChatColor.RED + prefix + "テンプレートに従ってください．");
+                    this.plugin.getLogger().info(ChatColor.RED + key + ": テンプレートに従ってください．");
                     return false;
                 }
             }
         } else {
-            this.plugin.getLogger().info(ChatColor.RED + prefix + "Locations がありません．");
+            this.plugin.getLogger().info(ChatColor.RED + "Locations がありません．");
             return false;
         }
 

@@ -15,24 +15,29 @@ Locations:
     # 転移先ワールド
     ToWorld: main
     # 転移先座標
-    ToLoc: 0,0,0
+    ToLoc: 0,43,0
   wahu:
     DisplayName: 和風地区
     DisplayMaterial: BAMBOO
     ToWorld: main
-    ToLoc: 0,0,0
+    ToLoc: -2716,63,-118
   yohu:
     DisplayName: 洋風地区
     DisplayMaterial: BRICKS
     ToWorld: main
-    ToLoc: 0,0,0
+    ToLoc: 0,69,-8586
   mati:
     DisplayName: 現代建築地区
     DisplayMaterial: WHITE_CONCRETE
     ToWorld: main
-    ToLoc: 0,0,0
+    ToLoc: 0,63,726
   noname:
     DisplayName: 名もなき村
     DisplayMaterial: OAK_WOOD
     ToWorld: main
-    ToLoc: 0,0,0
+    ToLoc: 5000,76,-5000
+  marchen:
+    DisplayName: メルヘン地区
+    DisplayMaterial: RED_MUSHROOM
+    ToWorld: main
+    ToLoc: 9000,61,-7500

@@ -5,6 +5,10 @@ api-version: 1.18
 authors: [ 5hak3 ]
 description: Yamlで指定した座標にテレポートするやつ（GUIとコマンド）
 
+# MVがあったら先に読み込む
+softdepend:
+  - Multiverse-Core
+
 permissions:
   wltp.op:
     description: OP権限判定用
