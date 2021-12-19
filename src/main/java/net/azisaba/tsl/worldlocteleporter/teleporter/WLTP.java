@@ -4,6 +4,7 @@ import net.azisaba.tsl.worldlocteleporter.WorldLocTeleporter;
 import net.azisaba.tsl.worldlocteleporter.config.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -30,27 +31,32 @@ public class WLTP implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        // いらないけど明示しておく
-        if (!command.getName().equalsIgnoreCase("wltp")) return false;
-        // argsがあるかないかをみる
-        switch (args.length) {
-            case 0:
-                this.showWLTPGUI(sender);
-                break;
-
-            case 1:
-                // ワールドへのテレポート
-                if (this.config.containLoc(args[0])) {
-                    if ((worldTeleporter(sender, this.config.getLocation(args[0])))) {
-                        break;
-                    }
-                }
-                sender.sendMessage(ChatColor.RED + prefix + "テレポートに失敗しました");
-
-            default:
-                return false;
+        if (command.getName().equalsIgnoreCase("getCustomCT")) {
+            if (!(sender instanceof Player)) return false;
+            this.giveCustomCT((Player)sender);
         }
-        return true;
+        else if (command.getName().equalsIgnoreCase("wltp")) {
+            // argsがあるかないかをみる
+            switch (args.length) {
+                case 0:
+                    this.showWLTPGUI(sender);
+                    break;
+
+                case 1:
+                    // ワールドへのテレポート
+                    if (this.config.containLoc(args[0])) {
+                        if ((worldTeleporter(sender, this.config.getLocation(args[0])))) {
+                            break;
+                        }
+                    }
+                    sender.sendMessage(ChatColor.RED + prefix + "テレポートに失敗しました");
+
+                default:
+                    return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -82,6 +88,10 @@ public class WLTP implements CommandExecutor {
         return true;
     }
 
+    /**
+     * senderにWLTPGUIを表示させる
+     * @param sender 表示させる対象
+     */
     public void showWLTPGUI (CommandSender sender) {
         // Consoleは失敗扱い
         if (!(sender instanceof Player)) return;
@@ -108,5 +118,19 @@ public class WLTP implements CommandExecutor {
         // 登録したmenuをチェスト開音を鳴らしながらプレイヤーに出す
         player.playSound(player.getLocation(), Sound.BLOCK_CHEST_OPEN, 2, 1);
         player.openInventory(menu);
+    }
+
+    public void giveCustomCT (Player player) {
+        ItemStack items = new ItemStack(Material.CRAFTING_TABLE);
+        ItemMeta meta = items.getItemMeta();
+        meta.setCustomModelData(100);
+        items.setItemMeta(meta);
+        // インベントリに空きがなかったら処理しない
+        if(player.getInventory().firstEmpty() == -1) {
+            player.sendMessage(ChatColor.RED + prefix + "インベントリに空きがありません．");
+            return;
+        }
+        player.getInventory().addItem(items);
+        player.sendMessage(ChatColor.YELLOW + prefix + "WorldLocTeleporter GUI起動用アイテムを配布しました．");
     }
 }

@@ -2,11 +2,14 @@ package net.azisaba.tsl.worldlocteleporter.teleporter;
 
 import net.azisaba.tsl.worldlocteleporter.config.*;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class WLTPListener implements Listener {
@@ -42,5 +45,20 @@ public class WLTPListener implements Listener {
         }
         // そうじゃない時はイベントキャンセルする
         event.setCancelled(true);
+    }
+
+    // 指定されたブロックが設置された時 (CRAFTING_TABLEのCustomModelData=100)
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onSetting (PlayerInteractEvent event) {
+        // 右クリックの時以外は捨てる
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        // 指定アイテムを手に持っているとき以外は捨てる
+        if (event.getItem() == null) return;
+        if (event.getItem().getType() != Material.CRAFTING_TABLE) return;
+        if (event.getItem().getItemMeta().getCustomModelData() != 100) return;
+
+        // イベントをキャンセルして，プレイヤーにコマンド実行させる
+        event.setCancelled(true);
+        event.getPlayer().performCommand("wltp");
     }
 }

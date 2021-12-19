@@ -14,6 +14,9 @@ commands:
   wltp:
     description: WorldLocTeleporterのキーワード
     usage: /wltp で GUI起動，/wltp <転移先名> で 転移先へ移動
+  getCustomCT:
+    description: WorldLocTeleporterのGUIを起動するCrafting Tableを入手する
+    usage: プレイヤー専用コマンド
   wltpreload:
     description: wltpの設定をリロードする
     permission: wltp.op
