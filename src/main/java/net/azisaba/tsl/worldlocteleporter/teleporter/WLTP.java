@@ -31,8 +31,8 @@ public class WLTP implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (command.getName().equalsIgnoreCase("getCustomCT")) {
-            if (!(sender instanceof Player)) return false;
+        if (command.getName().equalsIgnoreCase("getcustomct")) {
+//            if (!(sender instanceof Player)) return false;
             this.giveCustomCT((Player)sender);
         }
         else if (command.getName().equalsIgnoreCase("wltp")) {
@@ -123,6 +123,8 @@ public class WLTP implements CommandExecutor {
     public void giveCustomCT (Player player) {
         ItemStack items = new ItemStack(Material.CRAFTING_TABLE);
         ItemMeta meta = items.getItemMeta();
+        meta.setDisplayName("WorldLocTeleporter");
+        meta.setLore(new ArrayList<>(Arrays.asList("地面に右クリックするとGUIが開きます")));
         meta.setCustomModelData(100);
         items.setItemMeta(meta);
         // インベントリに空きがなかったら処理しない

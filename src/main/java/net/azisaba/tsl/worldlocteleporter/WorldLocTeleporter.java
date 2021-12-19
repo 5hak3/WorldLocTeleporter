@@ -17,6 +17,7 @@ public class WorldLocTeleporter extends JavaPlugin {
         Objects.requireNonNull(getCommand("wltpreload")).setExecutor(this.config);
         Objects.requireNonNull(getCommand("wltplist")).setExecutor(this.config);
         Objects.requireNonNull(getCommand("wltp")).setExecutor(new WLTP(this.config));
+        Objects.requireNonNull(getCommand("getcustomct")).setExecutor(new WLTP(this.config));
         getServer().getPluginManager().registerEvents(new WLTPListener(this.config), this);
     }
 }
