@@ -1,7 +1,9 @@
 package net.azisaba.tsl.worldlocteleporter.config;
 
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,30 +12,36 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 public class WLTPConfig implements CommandExecutor {
     private final String prefix = "[WLTP] ";
     private final JavaPlugin plugin;
 
-    @Getter
-    private Integer waitTime;
+    @Getter private Integer waitTime;
+    @Getter private Boolean isRestrictWorld;
+    @Getter private final ArrayList<World> availableWorlds = new ArrayList<>();
     private final HashMap<String,WLTPLocation> locs;
 
     public WLTPConfig(@NotNull JavaPlugin plugin) {
         this.plugin = plugin;
         this.locs = new HashMap<>();
-        this.loadConfig();
+        if(this.loadConfig())
+            this.plugin.getLogger().info(ChatColor.YELLOW + prefix + "config.yml を読み込みました．");
+        else
+            this.plugin.getLogger().info(ChatColor.RED + prefix + "config.yml の読み込みに失敗しました．");
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (command.getName().equalsIgnoreCase("wltpreload")) {
-            if(!(this.loadConfig()))
-                sender.sendMessage(ChatColor.RED + prefix + "config.yml の読み込みに失敗しました．");
-            else
+            if(this.loadConfig())
                 sender.sendMessage(ChatColor.YELLOW + prefix + "config.yml を読み込みました．");
+            else
+                sender.sendMessage(ChatColor.RED + prefix + "config.yml の読み込みに失敗しました．");
         }
         else if (command.getName().equalsIgnoreCase("wltplist")) this.listConfig(sender);
         else return false;
@@ -55,17 +63,59 @@ public class WLTPConfig implements CommandExecutor {
             // General.waittime を読み込む
             if (cs.contains("waittime")) {
                 if (cs.get("waittime") instanceof Integer)
-                    this.waitTime = (Integer) cs.get("waittime");
+                    this.waitTime = cs.getInt("waittime");
                 else {
-                    this.plugin.getLogger().info(ChatColor.RED + prefix + "waittime は Integer ではありません．");
+                    this.plugin.getLogger().info(ChatColor.RED + "waittime が Integer ではありません．");
                     return false;
                 }
             } else {
-                this.plugin.getLogger().info(ChatColor.RED + prefix + "waittime がありません．");
+                this.plugin.getLogger().info(ChatColor.RED + "waittime がありません．");
+                return false;
+            }
+            // General.restrictWorld を読み込む
+            if (cs.contains("restrictWorld")) {
+                if (cs.get("restrictWorld") instanceof Boolean) {
+                    this.isRestrictWorld = cs.getBoolean("restrictWorld");
+                }
+                else {
+                    this.plugin.getLogger().info(ChatColor.RED + "restrictWorld が Boolean ではありません．");
+                    return false;
+                }
+            } else {
+                this.plugin.getLogger().info(ChatColor.RED + "restrictWorld がありません．");
+                return false;
+            }
+            // General.restrictWorld を読み込む
+            if (cs.contains("availableWorld")) {
+                Object temp = cs.get("availableWorld");
+                if (temp instanceof List<?>) {
+                    if (((List<?>)temp).get(0) instanceof String) {
+                        List<String> tempList = cs.getStringList("availableWorld");
+                        // worldをロードする
+                        for (String wname: tempList) {
+                            World world = Bukkit.getWorld(wname);
+                            if (world != null)
+                                this.availableWorlds.add(world);
+                            else {
+                                this.plugin.getLogger().info(ChatColor.RED + wname + "が見つかりません．");
+                                return false;
+                            }
+                        }
+                    }
+                    else {
+                        this.plugin.getLogger().info(ChatColor.RED + "availableWorld が List<String> ではありません．");
+                        return false;
+                    }
+                } else {
+                    this.plugin.getLogger().info(ChatColor.RED + "availableWorld が List ではありません．");
+                    return false;
+                }
+            } else {
+                this.plugin.getLogger().info(ChatColor.RED + "availableWorld がありません．");
                 return false;
             }
         } else {
-            this.plugin.getLogger().info(ChatColor.RED + prefix + "General がありません．");
+            this.plugin.getLogger().info(ChatColor.RED + "General がありません．");
             return false;
         }
 
@@ -93,10 +143,6 @@ public class WLTPConfig implements CommandExecutor {
                         );
                         // デバッグ用
                         WLTPLocation dbg = this.locs.get(key);
-//                        String msg = "";
-//                        msg += "[" + key + "]" + "\ndispName: " + dbg.dispName + "\ndispMat: " + dbg.dispMat +
-//                                "\nworld: " + dbg.world + "\nloc: " + dbg.loc;
-//                        this.plugin.getLogger().info(msg);
                         if (dbg.world == null) this.plugin.getLogger().info(ChatColor.RED + "WORLDがNULLです．");
                         if (dbg.loc == null) this.plugin.getLogger().info(ChatColor.RED + "LOCがNULLです．");
                     }
@@ -121,13 +167,23 @@ public class WLTPConfig implements CommandExecutor {
      * 設定を表示する
      */
     private void listConfig (CommandSender sender) {
-//        if (sender.hasPermission("wltp.op")) {
+        String msg = "";
+        if (sender.hasPermission("wltp.op")) {
             sender.sendMessage(ChatColor.YELLOW + prefix + "TP待機時間: " + this.waitTime.toString());
-//        }
-        sender.sendMessage(ChatColor.YELLOW + prefix + "転移先リスト:");
-        for (String key: this.locs.keySet()) {
-            sender.sendMessage(ChatColor.YELLOW + "  " + key + ": " + this.locs.get(key).dispName);
+            sender.sendMessage(ChatColor.YELLOW + prefix + "利用可能ワールド限定: " + this.isRestrictWorld.toString());
+            msg = (prefix + "利用可能ワールド: ");
+            if (this.isRestrictWorld){
+                for(World w: this.availableWorlds) {
+                    msg += "\n    " + w.getName();
+                }
+            }
+            sender.sendMessage(ChatColor.YELLOW + msg);
         }
+        msg = (prefix + "転移先リスト:");
+        for (String key: this.locs.keySet()) {
+            msg += "\n    " + key + ": " + this.locs.get(key).dispName;
+        }
+        sender.sendMessage(ChatColor.YELLOW + msg);
     }
 
     public boolean containLoc (String key) {

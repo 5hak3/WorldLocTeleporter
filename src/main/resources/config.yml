@@ -2,6 +2,11 @@
 General:
   # 非OPが転送で待つ時間 (デフォルトは5秒)
   waittime: 5
+  # WLTPの仕様をワールド限定するかどうか
+  restrictWorld: true
+  # WLTPを利用できるワールドの名前リスト (restrictWorldがONのときのみ)
+  availableWorld:
+    - lobby
 # 転移先の設定
 Locations:
   # 転移先名.{転移先表示名, 表示マテリアル名, 転移先ワールド, 転移先座標}

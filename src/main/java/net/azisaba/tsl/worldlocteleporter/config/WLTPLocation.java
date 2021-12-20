@@ -30,7 +30,7 @@ public class WLTPLocation {
         else
             this.dispMat = Material.OAK_SIGN;
         // ワールドを取得
-        this.world = Bukkit.getServer().getWorld(world);
+        this.world = Bukkit.getWorld(world);
         // ワールドが取得できていれば座標を取得
         // ワールドが取得できていなければ座標をnullにしておく
         if (this.world != null) {

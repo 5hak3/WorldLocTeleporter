@@ -36,9 +36,7 @@ public class WLTPListener implements Listener {
             // Loreが転移先に含まれていればステージしてインベントリを閉じる
             if (this.config.containLoc(key)){
                 WLTPLocation loc = this.config.getLocation(key);
-                if (!player.hasPermission("wltp.op"))
-                    player.sendMessage(ChatColor.YELLOW + "[WLTP] " + config.getWaitTime().toString() + "秒後に" + loc.dispName + "へ移動します．");
-                WLTP.worldTeleporter(player, loc);
+                WLTP.worldTeleporter(player, loc, this.config);
                 event.getInventory().close();
                 return;
             }

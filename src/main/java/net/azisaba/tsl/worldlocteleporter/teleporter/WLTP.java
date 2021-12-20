@@ -2,10 +2,7 @@ package net.azisaba.tsl.worldlocteleporter.teleporter;
 
 import net.azisaba.tsl.worldlocteleporter.WorldLocTeleporter;
 import net.azisaba.tsl.worldlocteleporter.config.*;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -46,7 +43,7 @@ public class WLTP implements CommandExecutor {
                 case 1:
                     // ワールドへのテレポート
                     if (this.config.containLoc(args[0])) {
-                        if ((worldTeleporter(sender, this.config.getLocation(args[0])))) {
+                        if ((worldTeleporter(sender, this.config.getLocation(args[0]), this.config))) {
                             break;
                         }
                     }
@@ -66,7 +63,7 @@ public class WLTP implements CommandExecutor {
      * @param loc 転送先座標
      * @return 転送できたかどうか
      */
-    public static boolean worldTeleporter (CommandSender sender, WLTPLocation loc){
+    public static boolean worldTeleporter (CommandSender sender, WLTPLocation loc, WLTPConfig config){
         int waitSec = 5;
 
         // Consoleは失敗扱い
@@ -75,9 +72,27 @@ public class WLTP implements CommandExecutor {
         if (loc.loc == null) return false;
 
         Player player = (Player)sender;
+        // isRestrictWorld が true のとき Player が availableWorld にいるかどうかをチェック
+        // ただし wltp.op はチェックしない
+        if (config.getIsRestrictWorld() && !player.hasPermission("wltp.op")) {
+            boolean flg = false;
+            for (World w: config.getAvailableWorlds()){
+                if (player.getWorld() == w) flg = true;
+            }
+            if (!flg) {
+                String msg = "[WLTP] WLTPによるテレポートは";
+                for (World w: config.getAvailableWorlds()) msg+=("\n    "+ w.getName());
+                msg+="\nのみで行えます．";
+                player.sendMessage(ChatColor.RED + msg);
+                return false;
+            }
+        }
         // wltp.op のみ 移動待機時間を0
-        if (sender.hasPermission("wltp.op")) waitSec = 0;
+        if (player.hasPermission("wltp.op")) waitSec = 0;
 
+
+        if (!player.hasPermission("wltp.op"))
+            player.sendMessage(ChatColor.YELLOW + "[WLTP] " + config.getWaitTime().toString() + "秒後に" + loc.dispName + "へ移動します．");
         new BukkitRunnable() {
             @Override
             public void run() {
